@@ -12,16 +12,33 @@ import { DateRangePicker } from 'react-date-range'
 // react date range style
 import 'react-date-range/dist/styles.css' // main style file
 import 'react-date-range/dist/theme/default.css' // theme css file
+import { useRouter } from 'next/dist/client/router'
 
 function Header() {
-  const [searchInput, setSearcInput] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
   const [noOfGuest, setNoOfGuest] = useState(1)
 
+  const router = useRouter()
+
   const handelSelection = (ranges) => {
     setStartDate(ranges.selection.startDate)
     setEndDate(ranges.selection.endDate)
+  }
+  const resetInput = () => {
+    setSearchInput('')
+  }
+  const search = () => {
+    router.push({
+      pathname: '/search',
+      query: {
+        location: searchInput,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        noOfGuest,
+      },
+    })
   }
 
   const selectionRange = {
@@ -32,7 +49,10 @@ function Header() {
   return (
     <header className="sticky bg-white top-0 z-50 grid grid-cols-3 bg-white-100 shadow-md p-5 md:px-10">
       {/* left */}
-      <div className="relative flex h-10 cursor-pointer my-auto items-center">
+      <div
+        onClick={() => router.push('/')}
+        className="relative flex h-10 cursor-pointer my-auto items-center"
+      >
         <Image
           src="https://links.papareact.com/qd3"
           layout="fill"
@@ -44,7 +64,7 @@ function Header() {
       <div className="flex md:border-2 rounded-full py-2 md:shadow-sm text-sm text-gray-500">
         <input
           value={searchInput}
-          onChange={(e) => setSearcInput(e.target.value)}
+          onChange={(e) => setSearchInput(e.target.value)}
           type="text"
           placeholder="start your search"
           className="pl-5 bg-transparent outline-none flex-grow"
@@ -81,6 +101,14 @@ function Header() {
               type="number"
               className="w-12 pl-3 outline-none text-lg text-red-400"
             />
+          </div>
+          <div className="flex">
+            <button onClick={resetInput} className="flex-grow text-gray-500">
+              Cancel
+            </button>
+            <button onClick={search} className="flex-grow text-red-400">
+              Search
+            </button>
           </div>
         </div>
       )}
