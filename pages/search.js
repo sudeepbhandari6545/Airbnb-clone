@@ -1,14 +1,28 @@
+import { format } from 'date-fns'
+import { useRouter } from 'next/dist/client/router'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import InfoCard from '../components/InfoCard'
 
-function Search() {
+function Search({ searchResult }) {
+  const router = useRouter()
+  const { location, startDate, endDate, noOfGuest } = router.query
+  const formatedStartDate = format(new Date(startDate), 'dd mmm yy')
+
+  const formatedEndDate = format(new Date(endDate), 'dd mmm yy')
+  const range = `${formatedStartDate}-${formatedEndDate}`
+
   return (
     <div>
-      <Header />
+      <Header placeholder={`${location} | ${range} | ${noOfGuest}`} />
       <main className="flex">
         <section className="flex-grow pt-14 px-6">
-          <p className="text-xs">300+ stays for 5 number of guest</p>
-          <h1 className="text-2xl font-semibold mt-2 mb-4">Stays in Nepal</h1>
+          <p className="text-xs">
+            300+ stays -{range}-for {noOfGuest} guest
+          </p>
+          <h1 className="text-2xl font-semibold mt-2 mb-4">
+            Stays in {location}
+          </h1>
           <div className="hidden lg:inline-flex mb-5 space-x-3 text-gray-800 whitespace-nowrap">
             <p className="button">cancellation Flexbility</p>
             <p className="button">Type of Place</p>
@@ -16,6 +30,31 @@ function Search() {
             <p className="button">Rooms and Beds</p>
             <p className="button">More filters</p>
           </div>
+          {searchResult.map(
+            ({
+              img,
+              title,
+              location,
+              description,
+              star,
+              price,
+              total,
+              long,
+              lat,
+            }) => (
+              <InfoCard
+                img={img}
+                title={title}
+                location={location}
+                description={description}
+                star={star}
+                price={price}
+                total={total}
+                long={long}
+                lat={lat}
+              />
+            ),
+          )}
         </section>
       </main>
       <Footer />
@@ -24,3 +63,14 @@ function Search() {
 }
 
 export default Search
+
+export async function getServerSideProps() {
+  const searchResult = await fetch(
+    'https://links.papareact.com/isz',
+  ).then((res) => res.json())
+  return {
+    props: {
+      searchResult,
+    },
+  }
+}

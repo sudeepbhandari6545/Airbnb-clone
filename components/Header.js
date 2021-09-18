@@ -14,7 +14,7 @@ import 'react-date-range/dist/styles.css' // main style file
 import 'react-date-range/dist/theme/default.css' // theme css file
 import { useRouter } from 'next/dist/client/router'
 
-function Header() {
+function Header({ placeholder }) {
   const [searchInput, setSearchInput] = useState('')
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
@@ -66,7 +66,7 @@ function Header() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           type="text"
-          placeholder="start your search"
+          placeholder={placeholder || 'start your search'}
           className="pl-5 bg-transparent outline-none flex-grow"
         />
         <SearchIcon className="h-8 bg-red-400 rounded-full p-2 mr-1 cursor-pointer text-white hidden md:inline-flex" />
