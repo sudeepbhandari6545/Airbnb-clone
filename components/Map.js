@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import ReactMapGL, { Marker } from 'react-map-gl'
+import ReactMapGL, { Marker, Popup } from 'react-map-gl'
 import getCenter from 'geolib/es/getCenter'
 
 function Map({ searchResult }) {
+  const [selectedLocation, setSelectedLocation] = useState({})
   const coordinate = searchResult.map((result) => ({
     longitude: result.long,
     latitude: result.lat,
@@ -32,8 +33,27 @@ function Map({ searchResult }) {
             offsetLeft={-20}
             offsetTop={-10}
           >
-            <p className="cursor-pointer">📌</p>
+            <p
+              role="img"
+              onClick={() => setSelectedLocation(result)}
+              className="cursor-pointer text-2xl animate-bounce"
+              aria-level="push-pin"
+            >
+              📌
+            </p>
           </Marker>
+          {selectedLocation.long === result.long ? (
+            <Popup
+              onClose={() => setSelectedLocation({})}
+              closeOnClick={true}
+              latitude={result.lat}
+              longitude={result.long}
+            >
+              {result.title}
+            </Popup>
+          ) : (
+            false
+          )}
         </div>
       ))}
     </ReactMapGL>
